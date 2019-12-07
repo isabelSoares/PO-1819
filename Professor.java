@@ -1,31 +1,60 @@
 package sth;
 
-import java.util.ArrayList;
+import java.io.Serializable;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.Comparator;
 
-public class Professor extends Person{
-    
-    private ArrayList<?> _SProfessorList;
-    private ArrayList<?> _DProfessorList;
-    //private ArrayList<?> _CProfessorList;
-    private ArrayList<?> _PReceiver;
-    
-    public void createProject(Project p) {
-        
+public class Professor extends Person implements Serializable{
+    private static final long serialVersionUID = 201811161538L;
+
+    private TreeSet<Discipline> _disciplines;
+    private TreeMap<String,Course> _courses;
+
+    public Professor(int id, int phoneNumber, String name){ 
+        super(id, phoneNumber, name);
+        _disciplines = new TreeSet<Discipline>(new DisciplineComparator());
+        _courses= new TreeMap<String, Course>();
     }
 
-    public void closeProjetc(Project p) {
-        
+    public boolean addDiscipline(Discipline d) {
+        return _disciplines.add(d);
+    }
+    public boolean hasDiscipline(Discipline d){
+        return _disciplines.contains(d);
     }
 
-    public void showDisciplineStudents(Discipline d) {
-        
+    public boolean hasDisciplineName(String name){
+        for (Discipline d : _disciplines)
+            if (d.getName().equals(name))
+                return true;
+        return false;
     }
 
-    public void showProjectSubmissions(Project p) {
-        
+    public Discipline getDisciplineName(String name){
+        for (Discipline d : _disciplines)
+            if (d.getName().equals(name))
+                return d;
+        return null;
     }
 
-    public void showSurveyResults(Survey s) {
-        
+    public void setCourse(Course c){
+        _courses.put(c.getName(),c);
+    }
+
+    @Override
+    public String accept(User userDescription) {
+        return userDescription.visitProfessor(this);
+    } 
+
+
+    @Override
+    public String toString(){
+        String profName = new String();
+        profName = "DOCENTE" + super.toString();
+        for (Discipline d : _disciplines)
+            profName = profName + "\n" + d.toString();
+        return profName;
     }
 }
